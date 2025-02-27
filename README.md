@@ -6,6 +6,7 @@ Welcome to my SQL Learning Journey! This repository is a collection of projects 
 📌 About Me
 I’m a data enthusiast with a background in data analytics, process improvement, and reporting. As I work towards mastering SQL, I’m applying structured query techniques to clean, analyze, and optimize data for meaningful insights.
 
+
 📂 My SQL Journey
 This repository is a work in progress, evolving as I learn and apply new concepts. Some of the areas I’m currently exploring include:
 
@@ -25,6 +26,7 @@ Data Visualization: Power BI | Tableau
 
 Other: Python (for automation) | GitHub | Google Cloud
 
+
 📥 How to Use
 
 Each project folder contains:
@@ -37,10 +39,16 @@ Each project folder contains:
 
 Clone this repo and explore my progress:
 
-🗄️ https://github.com/FireTyrant/SQL-Portfolio-Projects.git
+
 🚀 Let’s Connect
+
+🗄️ https://github.com/FireTyrant/SQL-Portfolio-Projects.git
+
 📧 Email: jessermcgill@gmail.com
+
 🌐 Portfolio: https://www.jessesportfolio.net/
+
 💼 LinkedIn: https://www.linkedin.com/in/jesse-mcgill
+
 
 I’d love to connect with others who are also learning SQL or working in data analytics. Feel free to reach out! 🚀
