@@ -10,17 +10,29 @@ I’m a data enthusiast with a background in data analytics, process improvement
 This repository is a work in progress, evolving as I learn and apply new concepts. Some of the areas I’m currently exploring include:
 
 📊 Data Cleaning & Transformation – Learning how to standardize messy datasets using JOINs, CTEs, CASE statements, and other SQL functions.
+
 📈 Data Analysis & Reporting – Writing queries to extract insights, summarize data, and build reports.
+
 ⚡ Query Optimization – Understanding indexing, partitioning, and execution plans to improve performance.
+
 📡 Database Design – Practicing normalization, ERD modeling, and relational database concepts.
+
 🔧 Tools & Technologies
+
 SQL Databases: MySQL | PostgreSQL | SQL Server | BigQuery
+
 Data Visualization: Power BI | Tableau
+
 Other: Python (for automation) | GitHub | Google Cloud
+
 📥 How to Use
+
 Each project folder contains:
-✅ The concepts I was learning at the time
+
+✅ The concepts I am learning at the time
+
 ✅ SQL queries I used to practice
+
 ✅ My takeaways and reflections
 
 Clone this repo and explore my progress:
