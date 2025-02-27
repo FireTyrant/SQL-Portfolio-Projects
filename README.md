@@ -37,13 +37,10 @@ Each project folder contains:
 
 Clone this repo and explore my progress:
 
-bash
-Copy
-Edit
-git clone https://github.com/your-username/sql-learning-journey.git
+🗄️ https://github.com/FireTyrant/SQL-Portfolio-Projects.git
 🚀 Let’s Connect
-📧 Email: [Your Email]
+📧 Email: jessermcgill@gmail.com
 🌐 Portfolio: https://www.jessesportfolio.net/
-💼 LinkedIn: [Your LinkedIn Profile]
+💼 LinkedIn: https://www.linkedin.com/in/jesse-mcgill
 
 I’d love to connect with others who are also learning SQL or working in data analytics. Feel free to reach out! 🚀
