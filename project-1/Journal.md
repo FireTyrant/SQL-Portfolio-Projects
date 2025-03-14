@@ -1,4 +1,6 @@
-Cleaning and Uploading Data for SQL Analysis
+Date: March 14th, 2025:
+
+Title: Cleaning and Uploading Data for SQL Analysis
 
 For my Coursera project, I needed to demonstrate basic SQL commands—SELECT, FROM, and WHERE—using BigQuery with a public dataset. I initially chose a dataset containing San Francisco 311 requests, but I quickly ran into a problem: the most recent data only went up to August 2024, which wasn't current enough for my needs. So, I downloaded the latest dataset directly from the San Francisco 311 website, ensuring I had the most up-to-date information.
 
