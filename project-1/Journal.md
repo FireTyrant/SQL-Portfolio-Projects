@@ -33,6 +33,7 @@ Creating a GitHub account was straightforward, but getting everything structured
 📂 Journal – Documenting my struggles, solutions, and progress.
 📂 README – A project summary for visitors.
 
+
 Step 2: Creating Folders (Branches?) in GitHub
 GitHub doesn't use traditional folders like a typical file system. Instead, everything revolves around branches. This was a challenge at first—I couldn't create an empty folder unless I added a file inside it. Here's the workaround I figured out:
 1️⃣ Click Add File in the repository.
@@ -41,6 +42,7 @@ GitHub doesn't use traditional folders like a typical file system. Instead, ever
 4️⃣ Once the folder structure is created, I could upload actual files and delete the placeholder later.
 This method worked like a charm! After some trial and error, I structured my repo exactly as I wanted it.
 
+
 Step 3: Uploading Files and Handling GitHub's Size Limits
 With my folders (branches?) set up, I started uploading my work. Then, another hurdle—GitHub has a file size limit of 100MB per file, meaning my original 3.8GB dataset was a no-go. To work around this, I used Google Dataprep to generate a sample dataset for people to view and analyze.
 I also uploaded:
@@ -48,10 +50,12 @@ I also uploaded:
 ✔️ My cleaning recipe that transformed the dataset.
 ✔️ A README.md to introduce my project.
 
+
 Step 4: Journaling My Progress
 Now, here's something cool: GitHub allows you to create Markdown files (.md) directly in the browser! I used this to create:
 📄 README.md – A structured summary of my project.
 📄 Journal.md – A running log of challenges, solutions, and progress.
 With this setup complete, I'm finally ready to dive into BigQuery, run some SQL queries, and start visualizing my data.
+
 
 Now, I'm certain there are more efficient ways to do exactly what I just did. But when you are learning independently, with no one to ask questions to, this is the best I came up with. This project has been a fun mix of trial, error, and discovery—and it's only the beginning! 🚀
