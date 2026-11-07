@@ -33,6 +33,8 @@ Project 1 – San Francisco 311 data prep (project-1/)
 
 Project 2 – Mega Millions number generator: every draw since 2002 in SQLite, scored with SQL (project-2-mega-millions/)
 
+Project 3 – Powerball number generator: every draw since 1992, official + validated archive data, scored with SQL (project-3-powerball/)
+
 
 📥 How to Use
 

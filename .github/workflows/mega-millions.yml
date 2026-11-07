@@ -32,5 +32,6 @@ jobs:
             echo "No new draw yet."
           else
             git commit -m "Update Mega Millions picks after latest draw"
+            git pull --rebase origin "${GITHUB_REF_NAME}"
             git push
           fi

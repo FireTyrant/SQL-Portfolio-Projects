@@ -63,6 +63,13 @@ score = 0.50 × all-time lift  +  0.35 × last-100-draws lift  +  0.15 × overdu
 Ticket 1 is the five highest-scoring white balls + the top Mega Ball. The rest are drawn at random, weighted
 toward high scores, so you get variety. The seed is the latest draw date, so picks stay the same until the next draw.
 
+## 🌴 Playing in California
+
+The numbers drawn are the same in every state, so the picks don't change. California does pay prizes differently:
+every prize below the jackpot is pari-mutuel (based on how many people won it), so a popular number combination
+means splitting the prize more ways. Many players choose birthdays (1–31). Picking numbers **above 31** doesn't change
+your odds, but it may mean sharing less if you win.
+
 ## Auto-update after every draw
 
 [`.github/workflows/mega-millions.yml`](../.github/workflows/mega-millions.yml) runs every Wednesday and Saturday
