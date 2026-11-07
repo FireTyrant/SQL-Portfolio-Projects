@@ -27,10 +27,11 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898699+github-actions[bot]@users.noreply.github.com"
-          git add project-2-mega-millions/data project-2-mega-millions/output/latest_picks.md
-          if git diff --cached --quiet; then
+          # Only commit when the draw data changed (not just the report's timestamp).
+          if git diff --quiet -- project-2-mega-millions/data; then
             echo "No new draw yet."
           else
+            git add project-2-mega-millions/data project-2-mega-millions/output/latest_picks.md
             git commit -m "Update Mega Millions picks after latest draw"
             git pull --rebase origin "${GITHUB_REF_NAME}"
             git push
