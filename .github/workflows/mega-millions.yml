@@ -1,0 +1,36 @@
+name: Mega Millions picks
+
+# Draws are Tuesday & Friday at 11:00 PM ET. NY open data usually posts the
+# result the next morning, so refresh Wednesday and Saturday afternoons (UTC),
+# with an evening retry in case the data was late.
+on:
+  schedule:
+    - cron: "17 15 * * 3,6"
+    - cron: "17 23 * * 3,6"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Download draws and generate picks
+        working-directory: project-2-mega-millions
+        run: python mega_millions.py
+      - name: Commit updated picks
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898699+github-actions[bot]@users.noreply.github.com"
+          git add project-2-mega-millions/data project-2-mega-millions/output/latest_picks.md
+          if git diff --cached --quiet; then
+            echo "No new draw yet."
+          else
+            git commit -m "Update Mega Millions picks after latest draw"
+            git push
+          fi
