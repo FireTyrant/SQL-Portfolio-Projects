@@ -2,9 +2,12 @@
 """Mega Millions number generator built on every published draw.
 
 Steps:
-  1. Download the full Mega Millions draw history (May 2002 -> latest draw)
-     from the New York State open-data portal. Falls back to the saved CSV
-     in data/ if the download fails.
+  1. Download every draw from megamillions.com, the official site (Feb 2010
+     -> latest draw, posted within minutes of each drawing). The site doesn't
+     go back before 2010, so May 2002 -> Jan 2010 comes from a saved copy of
+     NY State open data (data/mega_millions_2002_2010.csv), which matches the
+     Texas Lottery's records for every draw both have. Nothing new is ever
+     taken from NY.
   2. Load it into a SQLite database (output/mega_millions.db) using the
      schema in sql/schema.sql.
   3. Score every number in the current game with sql/number_stats.sql:
@@ -21,22 +24,30 @@ from __future__ import annotations
 
 import argparse
 import csv
-import io
+import json
 import random
 import sqlite3
 import sys
 import urllib.request
-from datetime import datetime, timezone
+from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
-DATA_URL = "https://data.ny.gov/api/views/5xaw-6ayf/rows.csv?accessType=DOWNLOAD"
+OFFICIAL_URL = "https://www.megamillions.com/cmspages/utilservice.asmx/GetDrawingPagingData"
+OFFICIAL_PAGE_SIZE = 100  # the site rejects larger pages
 
 HERE = Path(__file__).resolve().parent
 SQL_DIR = HERE / "sql"
-CSV_PATH = HERE / "data" / "mega_millions_draws.csv"
+HISTORY_PATH = HERE / "data" / "mega_millions_2002_2010.csv"  # fixed; never re-downloaded
+OFFICIAL_CSV_PATH = HERE / "data" / "mega_millions_official.csv"
+OFFICIAL_COLUMNS = ["draw_date", "n1", "n2", "n3", "n4", "n5", "mega_ball", "megaplier"]
 OUT_DIR = HERE / "output"
 DB_PATH = OUT_DIR / "mega_millions.db"
 PICKS_PATH = OUT_DIR / "latest_picks.md"
+PICKS_JSON_PATH = OUT_DIR / "latest_picks.json"  # read by ../publish_picks.py
+GAME_NAME = "Mega Millions"
+BALL_NAME = "Mega Ball"
+DRAW_WEEKDAYS = (1, 4)  # Tuesday, Friday
+DRAW_TIME = "11:00 PM ET"
 
 # How the three signals are blended into one score (1.0 = perfectly average).
 WEIGHT_ALL_TIME = 0.50
@@ -48,28 +59,53 @@ OVERDUE_CAP = 2.0  # don't let a single long gap dominate the score
 # --------------------------------------------------------------------------- #
 # 1. Data
 # --------------------------------------------------------------------------- #
-def fetch_csv(offline: bool) -> str:
+def fetch_official(offline: bool) -> list[dict]:
+    """All draws on megamillions.com (Feb 2010 onward), one page at a time."""
     if not offline:
         try:
-            req = urllib.request.Request(DATA_URL, headers={"User-Agent": "mega-millions-generator"})
-            with urllib.request.urlopen(req, timeout=60) as resp:
-                text = resp.read().decode("utf-8")
-            if "Winning Numbers" in text.splitlines()[0]:
-                CSV_PATH.parent.mkdir(parents=True, exist_ok=True)
-                CSV_PATH.write_text(text, encoding="utf-8")
-                print(f"Downloaded latest draw history -> {CSV_PATH.relative_to(HERE)}")
-                return text
-            print("Unexpected download format; using saved CSV.", file=sys.stderr)
-        except Exception as exc:  # network problems etc.
-            print(f"Download failed ({exc}); using saved CSV.", file=sys.stderr)
-    if not CSV_PATH.exists():
-        sys.exit(f"No data available: {CSV_PATH} is missing and download failed.")
-    return CSV_PATH.read_text(encoding="utf-8")
+            rows, page, total = [], 1, None
+            while total is None or len(rows) < total:
+                body = json.dumps({"pageNumber": page, "pageSize": OFFICIAL_PAGE_SIZE,
+                                   "startDate": "", "endDate": ""}).encode()
+                req = urllib.request.Request(OFFICIAL_URL, data=body, headers={
+                    "Content-Type": "application/json; charset=utf-8",
+                    "User-Agent": "mega-millions-generator"})
+                with urllib.request.urlopen(req, timeout=60) as resp:
+                    data = json.loads(json.loads(resp.read().decode("utf-8"))["d"])
+                total = data["TotalResults"]
+                if not data["DrawingData"]:
+                    break
+                for r in data["DrawingData"]:
+                    rows.append({
+                        "draw_date": r["PlayDate"][:10],
+                        **{f"n{i}": r[f"N{i}"] for i in range(1, 6)},
+                        "mega_ball": r["MBall"],
+                        "megaplier": r["Megaplier"] if r["Megaplier"] and r["Megaplier"] > 0 else "",
+                    })
+                page += 1
+            if len(rows) < total:
+                raise ValueError(f"got {len(rows)} of {total} draws")
+            rows.sort(key=lambda r: r["draw_date"])
+            with OFFICIAL_CSV_PATH.open("w", newline="", encoding="utf-8") as f:
+                w = csv.DictWriter(f, fieldnames=OFFICIAL_COLUMNS)
+                w.writeheader()
+                w.writerows(rows)
+            print(f"Downloaded {len(rows):,} official draws -> {OFFICIAL_CSV_PATH.relative_to(HERE)}")
+            return rows
+        except Exception as exc:
+            print(f"Official download failed ({exc}); using saved CSV.", file=sys.stderr)
+    if not OFFICIAL_CSV_PATH.exists():
+        sys.exit("No data available: megamillions.com download failed and no saved CSV.")
+    with OFFICIAL_CSV_PATH.open(encoding="utf-8") as f:
+        return list(csv.DictReader(f))
 
 
-def parse_draws(text: str) -> list[tuple]:
-    rows = []
-    for rec in csv.DictReader(io.StringIO(text)):
+def parse_draws(official: list[dict]) -> list[tuple]:
+    """Official draws, plus the fixed 2002-2010 history; official wins on overlap."""
+    rows = {}
+    with HISTORY_PATH.open(encoding="utf-8") as f:
+        history = list(csv.DictReader(f))
+    for rec in history:
         date = datetime.strptime(rec["Draw Date"].strip(), "%m/%d/%Y").date().isoformat()
         whites = sorted(int(x) for x in rec["Winning Numbers"].split())
         if len(whites) != 5 or len(set(whites)) != 5:
@@ -77,9 +113,14 @@ def parse_draws(text: str) -> list[tuple]:
             continue
         mega = int(rec["Mega Ball"])
         mult = (rec.get("Multiplier") or "").strip()
-        rows.append((date, *whites, mega, int(mult) if mult.isdigit() else None))
-    rows.sort()
-    return rows
+        rows[date] = (date, *whites, mega, int(mult) if mult.isdigit() else None, "ny_2002_2010")
+
+    for rec in official:
+        whites = sorted(int(rec[f"n{i}"]) for i in range(1, 6))
+        mult = str(rec["megaplier"]).strip()
+        rows[rec["draw_date"]] = (rec["draw_date"], *whites, int(rec["mega_ball"]),
+                                  int(mult) if mult.isdigit() else None, "megamillions_com")
+    return sorted(rows.values())
 
 
 def build_db(draws: list[tuple]) -> sqlite3.Connection:
@@ -88,7 +129,7 @@ def build_db(draws: list[tuple]) -> sqlite3.Connection:
         DB_PATH.unlink()
     con = sqlite3.connect(DB_PATH)
     con.executescript((SQL_DIR / "schema.sql").read_text())
-    con.executemany("INSERT OR REPLACE INTO draws VALUES (?,?,?,?,?,?,?,?)", draws)
+    con.executemany("INSERT OR REPLACE INTO draws VALUES (?,?,?,?,?,?,?,?,?)", draws)
     con.executemany(
         "INSERT INTO draw_numbers VALUES (?,?,?)",
         [(d[0], "white", n) for d in draws for n in d[1:6]] + [(d[0], "mega", d[6]) for d in draws],
@@ -146,6 +187,27 @@ def make_tickets(whites, megas, count, rng) -> list[tuple[str, list[int], int]]:
 # --------------------------------------------------------------------------- #
 # 3. Report
 # --------------------------------------------------------------------------- #
+def next_draw(latest: str) -> str:
+    """The first draw day after the latest draw."""
+    d = date.fromisoformat(latest) + timedelta(days=1)
+    while d.weekday() not in DRAW_WEEKDAYS:
+        d += timedelta(days=1)
+    return d.isoformat()
+
+
+def write_json(draws, tickets) -> None:
+    latest = draws[-1]
+    PICKS_JSON_PATH.write_text(json.dumps({
+        "game": GAME_NAME,
+        "ball_name": BALL_NAME,
+        "draws_used": len(draws),
+        "first_draw": draws[0][0],
+        "latest_draw": {"date": latest[0], "white": list(latest[1:6]), "ball": latest[6]},
+        "next_draw": {"date": next_draw(latest[0]), "time": DRAW_TIME},
+        "tickets": [{"method": m, "white": w, "ball": b} for m, w, b in tickets],
+    }, indent=2) + "\n", encoding="utf-8")
+
+
 def fmt(nums) -> str:
     return " ".join(f"{n:02d}" for n in nums)
 
@@ -172,9 +234,14 @@ def write_report(con, whites, megas, tickets, recent) -> str:
         "# Mega Millions picks for the next draw",
         "",
         f"_Generated {datetime.now(timezone.utc):%Y-%m-%d %H:%M} UTC from **{total:,} draws** "
-        f"({first} to {last})._",
+        f"({first} to {last}): "
+        + ", ".join(f"{n:,} from {src}" for src, n in
+                    con.execute("SELECT source, COUNT(*) FROM draws GROUP BY source ORDER BY source DESC"))
+        + "._",
         "",
         f"**Latest draw ({latest[0]}):** {fmt(latest[1:6])}  Mega Ball **{latest[6]:02d}**",
+        "",
+        f"**Next draw:** {date.fromisoformat(next_draw(latest[0])):%a %b %-d, %Y} at {DRAW_TIME}",
         "",
         "## Tickets",
         "",
@@ -220,10 +287,10 @@ def main() -> None:
     ap.add_argument("--tickets", type=int, default=5, help="number of tickets to generate (default 5)")
     ap.add_argument("--recent", type=int, default=100, help="draws counted as 'recent' (default 100)")
     ap.add_argument("--seed", type=int, help="random seed (default: latest draw date, so picks are stable per draw)")
-    ap.add_argument("--offline", action="store_true", help="skip download, use data/mega_millions_draws.csv")
+    ap.add_argument("--offline", action="store_true", help="skip the download, use the saved CSVs in data/")
     args = ap.parse_args()
 
-    draws = parse_draws(fetch_csv(args.offline))
+    draws = parse_draws(fetch_official(args.offline))
     con = build_db(draws)
     whites = number_stats(con, "white", args.recent)
     megas = number_stats(con, "mega", args.recent)
@@ -231,6 +298,7 @@ def main() -> None:
     seed = args.seed if args.seed is not None else int(draws[-1][0].replace("-", ""))
     tickets = make_tickets(whites, megas, max(1, args.tickets), random.Random(seed))
     write_report(con, whites, megas, tickets, args.recent)
+    write_json(draws, tickets)
 
     print(f"\nLoaded {len(draws):,} draws ({draws[0][0]} to {draws[-1][0]}).")
     print("Picks for the next draw:")
