@@ -22,11 +22,19 @@ Only Python's standard library is needed (no installs).
 
 | Draws | Source | File |
 |---|---|---|
-| Feb 3, 2010 → today | [NY Open Data – Lottery Powerball Winning Numbers: Beginning 2010](https://data.ny.gov/Government-Finance/Lottery-Powerball-Winning-Numbers-Beginning-2010/d6yy-54nr) (official, refreshed every run) | [`data/powerball_draws.csv`](data/powerball_draws.csv) |
-| Apr 22, 1992 → Jan 30, 2010 | [powerball.net archive](https://www.powerball.net/archive/1992) (unofficial; no official source publishes pre-2010 data as a download) | [`data/powerball_draws_1992_2010.csv`](data/powerball_draws_1992_2010.csv) |
+| Nov 1, 1997 → today | [powerball.com](https://www.powerball.com/previous-results?gc=powerball), the official site | [`data/powerball_official.csv`](data/powerball_official.csv) |
+| Apr 22, 1992 → Oct 29, 1997 | [powerball.net archive](https://www.powerball.net/archive/1992) (powerball.com lists these 577 draws but shows no numbers for them) | [`data/powerball_draws_1992_2010.csv`](data/powerball_draws_1992_2010.csv) |
 
-To check the unofficial archive, I compared its 2010–2012 draws with the official data: **304 of 304 draws
-matched exactly**. Every draw is also checked against its era's number ranges every time the script runs.
+The first run downloads every page of powerball.com's history (about 2 minutes). Later runs re-download only the last
+30 days, so they take about a second. How the sources were checked:
+
+- powerball.com lists all 3,877 draw dates, and the archive's dates match them exactly.
+- For the 1,279 draws from 1997 to 2010 that both have, the archive matches powerball.com **exactly**, so it can be
+  trusted for the 1992–1997 draws the official site leaves blank.
+- powerball.com also matched all 2,021 draws in NY Open Data, the source used before.
+
+Every draw is also checked against its era's number ranges every time the script runs. The `draws.source` column
+records where each row came from.
 
 ## The SQL
 

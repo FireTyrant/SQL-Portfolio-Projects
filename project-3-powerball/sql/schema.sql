@@ -30,7 +30,7 @@ CREATE TABLE draws (
     n4 INTEGER NOT NULL, n5 INTEGER NOT NULL,
     powerball  INTEGER NOT NULL,
     power_play INTEGER,            -- NULL before 2010 / when not reported
-    source     TEXT NOT NULL       -- 'ny_open_data' or 'archive_1992_2010'
+    source     TEXT NOT NULL       -- 'powerball_com' (official) or 'archive_1992_1997'
 );
 
 -- Long (normalized) form: one row per ball drawn. Makes counting easy.

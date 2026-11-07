@@ -2,11 +2,12 @@
 """Powerball number generator built on every draw since the first one (April 22, 1992).
 
 Steps:
-  1. Download the official draw history (Feb 2010 -> latest draw) from the
-     New York State open-data portal (falls back to the saved CSV in data/),
-     and combine it with data/powerball_draws_1992_2010.csv, the earlier draws
-     from the powerball.net archive (checked against 304 overlapping official
-     draws: 0 mismatches).
+  1. Download the draw history from powerball.com, the official site
+     (only new pages after the first run), saved to data/powerball_official.csv.
+     powerball.com lists every draw since 1992 but shows no numbers for the
+     577 draws from Apr 1992 to Oct 1997; those come from
+     data/powerball_draws_1992_2010.csv (the powerball.net archive, which
+     matches all 1,279 official draws it overlaps).
   2. Load it into a SQLite database (output/powerball.db) using the
      schema in sql/schema.sql.
   3. Score every number in the current game with sql/number_stats.sql:
@@ -23,23 +24,28 @@ from __future__ import annotations
 
 import argparse
 import csv
-import io
+import re
+import time
+import urllib.parse
 import random
 import sqlite3
 import sys
 import urllib.request
-from datetime import datetime, timezone
+from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
-DATA_URL = "https://data.ny.gov/api/views/d6yy-54nr/rows.csv?accessType=DOWNLOAD"
+OFFICIAL_URL = "https://www.powerball.com/previous-results"
+FIRST_DRAW = "1992-04-22"
+REFETCH_DAYS = 30  # re-download the last month each run, in case of corrections
 
 HERE = Path(__file__).resolve().parent
 SQL_DIR = HERE / "sql"
-CSV_PATH = HERE / "data" / "powerball_draws.csv"
+OFFICIAL_CSV_PATH = HERE / "data" / "powerball_official.csv"
 ARCHIVE_PATH = HERE / "data" / "powerball_draws_1992_2010.csv"
 OUT_DIR = HERE / "output"
 DB_PATH = OUT_DIR / "powerball.db"
 PICKS_PATH = OUT_DIR / "latest_picks.md"
+OFFICIAL_COLUMNS = ["draw_date", "n1", "n2", "n3", "n4", "n5", "powerball", "power_play"]
 
 # How the three signals are blended into one score (1.0 = perfectly average).
 WEIGHT_ALL_TIME = 0.50
@@ -51,46 +57,87 @@ OVERDUE_CAP = 2.0  # don't let a single long gap dominate the score
 # --------------------------------------------------------------------------- #
 # 1. Data
 # --------------------------------------------------------------------------- #
-def fetch_csv(offline: bool) -> str:
-    if not offline:
-        try:
-            req = urllib.request.Request(DATA_URL, headers={"User-Agent": "powerball-generator"})
-            with urllib.request.urlopen(req, timeout=60) as resp:
-                text = resp.read().decode("utf-8")
-            if "Winning Numbers" in text.splitlines()[0]:
-                CSV_PATH.parent.mkdir(parents=True, exist_ok=True)
-                CSV_PATH.write_text(text, encoding="utf-8")
-                print(f"Downloaded latest draw history -> {CSV_PATH.relative_to(HERE)}")
-                return text
-            print("Unexpected download format; using saved CSV.", file=sys.stderr)
-        except Exception as exc:  # network problems etc.
-            print(f"Download failed ({exc}); using saved CSV.", file=sys.stderr)
-    if not CSV_PATH.exists():
-        sys.exit(f"No data available: {CSV_PATH} is missing and download failed.")
-    return CSV_PATH.read_text(encoding="utf-8")
+CARD_RE = re.compile(r'<a class="card"[^>]*date=(\d{4}-\d{2}-\d{2})">(.*?)</a>', re.S)
+WHITE_RE = re.compile(r'white-balls[^"]*">\s*<div>\s*(\d+)')
+POWER_RE = re.compile(r'col powerball[^"]*">\s*<div>\s*(\d+)')
+PLAY_RE = re.compile(r'class="multiplier">(\d+)x')
 
 
-def parse_draws(text: str) -> list[tuple]:
-    """Official NY data: 'Winning Numbers' holds 5 white balls then the Powerball."""
-    rows = {}
-    for rec in csv.DictReader(io.StringIO(text)):
-        date = datetime.strptime(rec["Draw Date"].strip(), "%m/%d/%Y").date().isoformat()
-        nums = [int(x) for x in rec["Winning Numbers"].split()]
-        whites = sorted(nums[:5])
-        if len(nums) != 6 or len(set(whites)) != 5:
-            print(f"Skipping malformed draw {date}: {rec['Winning Numbers']}", file=sys.stderr)
-            continue
-        mult = (rec.get("Multiplier") or "").strip()
-        rows[date] = (date, *whites, nums[5], int(mult) if mult.isdigit() else None, "ny_open_data")
+def fetch_page(start: str, end: str, page: int) -> list[tuple[str, str]]:
+    query = urllib.parse.urlencode({"gc": "powerball", "sd": start, "ed": end, "pg": page})
+    req = urllib.request.Request(f"{OFFICIAL_URL}?{query}", headers={
+        "User-Agent": "powerball-generator", "X-Requested-With": "XMLHttpRequest"})
+    with urllib.request.urlopen(req, timeout=60) as resp:
+        return CARD_RE.findall(resp.read().decode("utf-8"))
 
-    # Earlier draws (1992 -> Feb 2010) are not in the official feed.
+
+def parse_card(date: str, html: str) -> dict:
+    whites, power, play = WHITE_RE.findall(html), POWER_RE.findall(html), PLAY_RE.findall(html)
+    row = {"draw_date": date, "powerball": power[0] if power else "", "power_play": play[0] if play else ""}
+    for i in range(5):
+        row[f"n{i + 1}"] = sorted(map(int, whites))[i] if len(whites) == 5 else ""
+    return row
+
+
+def fetch_official(offline: bool) -> list[dict]:
+    """Every draw on powerball.com. After the first run only recent pages are fetched."""
+    saved = {}
+    if OFFICIAL_CSV_PATH.exists():
+        with OFFICIAL_CSV_PATH.open(encoding="utf-8") as f:
+            saved = {r["draw_date"]: r for r in csv.DictReader(f)}
+    if offline:
+        return sorted(saved.values(), key=lambda r: r["draw_date"])
+
+    start = FIRST_DRAW
+    if saved:
+        start = (date.fromisoformat(max(saved)) - timedelta(days=REFETCH_DAYS)).isoformat()
+    end = date.today().isoformat()
+    try:
+        new = 0
+        for page in range(1, 1000):
+            cards = fetch_page(start, end, page)
+            if not cards:
+                break
+            for d, html in cards:
+                new += d not in saved
+                saved[d] = parse_card(d, html)
+            time.sleep(0.5)  # be polite to the site
+        rows = sorted(saved.values(), key=lambda r: r["draw_date"])
+        OFFICIAL_CSV_PATH.parent.mkdir(parents=True, exist_ok=True)
+        with OFFICIAL_CSV_PATH.open("w", newline="", encoding="utf-8") as f:
+            w = csv.DictWriter(f, fieldnames=OFFICIAL_COLUMNS)
+            w.writeheader()
+            w.writerows(rows)
+        print(f"powerball.com: {new} new draw(s) since {start} -> {OFFICIAL_CSV_PATH.relative_to(HERE)}")
+        return rows
+    except Exception as exc:  # network problems etc.
+        print(f"powerball.com download failed ({exc}); using saved CSV.", file=sys.stderr)
+        if not saved:
+            sys.exit("No data available: download failed and no saved CSV.")
+        return sorted(saved.values(), key=lambda r: r["draw_date"])
+
+
+def parse_draws(official: list[dict]) -> list[tuple]:
+    """Official draws, with the archive filling in draws the site shows no numbers for."""
     with ARCHIVE_PATH.open(encoding="utf-8") as f:
-        for rec in csv.DictReader(f):
-            date = rec["draw_date"]
-            if date not in rows:
-                whites = sorted(int(rec[f"n{i}"]) for i in range(1, 6))
-                rows[date] = (date, *whites, int(rec["powerball"]), None, "archive_1992_2010")
-    return sorted(rows.values())
+        archive = {r["draw_date"]: r for r in csv.DictReader(f)}
+    rows, missing = [], []
+    for rec in official:
+        d = rec["draw_date"]
+        if rec["n1"] and rec["powerball"]:
+            src = rec
+            source = "powerball_com"
+        elif d in archive:
+            src, source = archive[d], "archive_1992_1997"
+        else:
+            missing.append(d)
+            continue
+        whites = sorted(int(src[f"n{i}"]) for i in range(1, 6))
+        play = str(rec.get("power_play") or "")
+        rows.append((d, *whites, int(src["powerball"]), int(play) if play.isdigit() else None, source))
+    if missing:
+        print(f"Warning: no numbers found for {len(missing)} draw(s), e.g. {missing[:3]}", file=sys.stderr)
+    return rows
 
 
 def build_db(draws: list[tuple]) -> sqlite3.Connection:
@@ -193,7 +240,10 @@ def write_report(con, whites, powers, tickets, recent) -> str:
         "# Powerball picks for the next draw",
         "",
         f"_Generated {datetime.now(timezone.utc):%Y-%m-%d %H:%M} UTC from **{total:,} draws** "
-        f"({first} to {last})._",
+        f"({first} to {last}): "
+        + ", ".join(f"{n:,} from {src}" for src, n in
+                    con.execute("SELECT source, COUNT(*) FROM draws GROUP BY source ORDER BY source DESC"))
+        + "._",
         "",
         f"**Latest draw ({latest[0]}):** {fmt(latest[1:6])}  Powerball **{latest[6]:02d}**",
         "",
@@ -241,10 +291,10 @@ def main() -> None:
     ap.add_argument("--tickets", type=int, default=5, help="number of tickets to generate (default 5)")
     ap.add_argument("--recent", type=int, default=100, help="draws counted as 'recent' (default 100)")
     ap.add_argument("--seed", type=int, help="random seed (default: latest draw date, so picks are stable per draw)")
-    ap.add_argument("--offline", action="store_true", help="skip download, use data/powerball_draws.csv")
+    ap.add_argument("--offline", action="store_true", help="skip download, use the saved CSVs in data/")
     args = ap.parse_args()
 
-    draws = parse_draws(fetch_csv(args.offline))
+    draws = parse_draws(fetch_official(args.offline))
     con = build_db(draws)
     whites = number_stats(con, "white", args.recent)
     powers = number_stats(con, "power", args.recent)
