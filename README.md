@@ -27,6 +27,13 @@ Data Visualization: Power BI | Tableau
 Other: Python (for automation) | GitHub | Google Cloud
 
 
+📁 Projects
+
+Project 1 – San Francisco 311 data prep (project-1/)
+
+Project 2 – Mega Millions number generator: every draw since 2002 in SQLite, scored with SQL (project-2-mega-millions/)
+
+
 📥 How to Use
 
 Each project folder contains:
