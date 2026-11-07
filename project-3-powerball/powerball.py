@@ -24,6 +24,7 @@ from __future__ import annotations
 
 import argparse
 import csv
+import json
 import re
 import time
 import urllib.parse
@@ -45,6 +46,11 @@ ARCHIVE_PATH = HERE / "data" / "powerball_draws_1992_2010.csv"
 OUT_DIR = HERE / "output"
 DB_PATH = OUT_DIR / "powerball.db"
 PICKS_PATH = OUT_DIR / "latest_picks.md"
+PICKS_JSON_PATH = OUT_DIR / "latest_picks.json"  # read by ../publish_picks.py
+GAME_NAME = "Powerball"
+BALL_NAME = "Powerball"
+DRAW_WEEKDAYS = (0, 2, 5)  # Monday, Wednesday, Saturday
+DRAW_TIME = "10:59 PM ET"
 OFFICIAL_COLUMNS = ["draw_date", "n1", "n2", "n3", "n4", "n5", "powerball", "power_play"]
 
 # How the three signals are blended into one score (1.0 = perfectly average).
@@ -214,6 +220,27 @@ def make_tickets(whites, powers, count, rng) -> list[tuple[str, list[int], int]]
 # --------------------------------------------------------------------------- #
 # 3. Report
 # --------------------------------------------------------------------------- #
+def next_draw(latest: str) -> str:
+    """The first draw day after the latest draw."""
+    d = date.fromisoformat(latest) + timedelta(days=1)
+    while d.weekday() not in DRAW_WEEKDAYS:
+        d += timedelta(days=1)
+    return d.isoformat()
+
+
+def write_json(draws, tickets) -> None:
+    latest = draws[-1]
+    PICKS_JSON_PATH.write_text(json.dumps({
+        "game": GAME_NAME,
+        "ball_name": BALL_NAME,
+        "draws_used": len(draws),
+        "first_draw": draws[0][0],
+        "latest_draw": {"date": latest[0], "white": list(latest[1:6]), "ball": latest[6]},
+        "next_draw": {"date": next_draw(latest[0]), "time": DRAW_TIME},
+        "tickets": [{"method": m, "white": w, "ball": b} for m, w, b in tickets],
+    }, indent=2) + "\n", encoding="utf-8")
+
+
 def fmt(nums) -> str:
     return " ".join(f"{n:02d}" for n in nums)
 
@@ -246,6 +273,8 @@ def write_report(con, whites, powers, tickets, recent) -> str:
         + "._",
         "",
         f"**Latest draw ({latest[0]}):** {fmt(latest[1:6])}  Powerball **{latest[6]:02d}**",
+        "",
+        f"**Next draw:** {date.fromisoformat(next_draw(latest[0])):%a %b %-d, %Y} at {DRAW_TIME}",
         "",
         "## Tickets",
         "",
@@ -302,6 +331,7 @@ def main() -> None:
     seed = args.seed if args.seed is not None else int(draws[-1][0].replace("-", ""))
     tickets = make_tickets(whites, powers, max(1, args.tickets), random.Random(seed))
     write_report(con, whites, powers, tickets, args.recent)
+    write_json(draws, tickets)
 
     print(f"\nLoaded {len(draws):,} draws ({draws[0][0]} to {draws[-1][0]}).")
     print("Picks for the next draw:")

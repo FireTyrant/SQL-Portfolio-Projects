@@ -1,0 +1,78 @@
+{
+  "game": "Mega Millions",
+  "ball_name": "Mega Ball",
+  "draws_used": 2555,
+  "first_draw": "2002-05-17",
+  "latest_draw": {
+    "date": "2026-11-06",
+    "white": [
+      27,
+      34,
+      44,
+      53,
+      64
+    ],
+    "ball": 1
+  },
+  "next_draw": {
+    "date": "2026-11-10",
+    "time": "11:00 PM ET"
+  },
+  "tickets": [
+    {
+      "method": "Top scores",
+      "white": [
+        30,
+        39,
+        43,
+        52,
+        59
+      ],
+      "ball": 12
+    },
+    {
+      "method": "Weighted",
+      "white": [
+        11,
+        18,
+        43,
+        60,
+        63
+      ],
+      "ball": 5
+    },
+    {
+      "method": "Weighted",
+      "white": [
+        8,
+        17,
+        30,
+        49,
+        59
+      ],
+      "ball": 12
+    },
+    {
+      "method": "Weighted",
+      "white": [
+        19,
+        47,
+        52,
+        59,
+        65
+      ],
+      "ball": 15
+    },
+    {
+      "method": "Weighted",
+      "white": [
+        23,
+        31,
+        42,
+        59,
+        69
+      ],
+      "ball": 4
+    }
+  ]
+}

@@ -1,0 +1,56 @@
+name: Lottery picks
+
+# Pulls new results from megamillions.com and powerball.com about an hour after
+# every draw and updates the picks for BOTH games each time.
+#
+# Draws (Eastern Time):
+#   Powerball      Mon, Wed, Sat  10:59 PM
+#   Mega Millions  Tue, Fri       11:00 PM
+# One hour later is about midnight ET = 04:00 UTC in daylight time
+# (Mar-Nov) or 05:00 UTC in standard time (Nov-Mar), on the next UTC day
+# (Sun, Tue, Wed, Thu, Sat). Both times are scheduled so the 1-hour run
+# happens all year; a run that finds no new draw commits nothing.
+# The 06:00 UTC run is a retry in case a site posted late.
+on:
+  schedule:
+    - cron: "0 4 * * 0,2,3,4,6"
+    - cron: "0 5 * * 0,2,3,4,6"
+    - cron: "0 6 * * 0,2,3,4,6"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: lottery-picks
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Pull Mega Millions results and make picks
+        run: python project-2-mega-millions/mega_millions.py
+      - name: Pull Powerball results and make picks
+        run: python project-3-powerball/powerball.py
+      - name: Publish both games' picks
+        run: python publish_picks.py
+      - name: Commit if there was a new draw
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898699+github-actions[bot]@users.noreply.github.com"
+          # Only commit when draw data changed (not just a report timestamp).
+          if git diff --quiet -- project-2-mega-millions/data project-3-powerball/data; then
+            echo "No new draw yet."
+          else
+            git add project-2-mega-millions/data project-3-powerball/data \
+                    project-2-mega-millions/output/latest_picks.* \
+                    project-3-powerball/output/latest_picks.* LATEST_PICKS.md
+            git commit -m "Update lottery picks after latest draw"
+            git pull --rebase origin "${GITHUB_REF_NAME}"
+            git push
+          fi

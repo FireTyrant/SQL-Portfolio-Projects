@@ -29,6 +29,8 @@ Other: Python (for automation) | GitHub | Google Cloud
 
 📁 Projects
 
+🎱 Latest lottery picks (updated an hour after every draw): LATEST_PICKS.md
+
 Project 1 – San Francisco 311 data prep (project-1/)
 
 Project 2 – Mega Millions number generator: every draw since 2002 in SQLite, scored with SQL (project-2-mega-millions/)
