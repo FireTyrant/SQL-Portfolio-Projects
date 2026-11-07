@@ -2,9 +2,13 @@
 """Mega Millions number generator built on every published draw.
 
 Steps:
-  1. Download the full Mega Millions draw history (May 2002 -> latest draw)
-     from the New York State open-data portal. Falls back to the saved CSV
-     in data/ if the download fails.
+  1. Download the draw history from two sources and combine them:
+       - megamillions.com (official): Feb 2010 -> latest draw, posted within
+         minutes of each drawing
+       - NY State open data: May 2002 -> latest, used for 2002-2010
+     Where both have a draw, the official site wins (NY has 2 known errors,
+     confirmed against the Texas Lottery). Saved CSVs in data/ are used if a
+     download fails.
   2. Load it into a SQLite database (output/mega_millions.db) using the
      schema in sql/schema.sql.
   3. Score every number in the current game with sql/number_stats.sql:
@@ -22,6 +26,7 @@ from __future__ import annotations
 import argparse
 import csv
 import io
+import json
 import random
 import sqlite3
 import sys
@@ -30,10 +35,14 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 DATA_URL = "https://data.ny.gov/api/views/5xaw-6ayf/rows.csv?accessType=DOWNLOAD"
+OFFICIAL_URL = "https://www.megamillions.com/cmspages/utilservice.asmx/GetDrawingPagingData"
+OFFICIAL_PAGE_SIZE = 100  # the site rejects larger pages
 
 HERE = Path(__file__).resolve().parent
 SQL_DIR = HERE / "sql"
 CSV_PATH = HERE / "data" / "mega_millions_draws.csv"
+OFFICIAL_CSV_PATH = HERE / "data" / "mega_millions_official.csv"
+OFFICIAL_COLUMNS = ["draw_date", "n1", "n2", "n3", "n4", "n5", "mega_ball", "megaplier"]
 OUT_DIR = HERE / "output"
 DB_PATH = OUT_DIR / "mega_millions.db"
 PICKS_PATH = OUT_DIR / "latest_picks.md"
@@ -67,8 +76,51 @@ def fetch_csv(offline: bool) -> str:
     return CSV_PATH.read_text(encoding="utf-8")
 
 
-def parse_draws(text: str) -> list[tuple]:
-    rows = []
+def fetch_official(offline: bool) -> list[dict]:
+    """All draws on megamillions.com (Feb 2010 onward), one page at a time."""
+    if not offline:
+        try:
+            rows, page, total = [], 1, None
+            while total is None or len(rows) < total:
+                body = json.dumps({"pageNumber": page, "pageSize": OFFICIAL_PAGE_SIZE,
+                                   "startDate": "", "endDate": ""}).encode()
+                req = urllib.request.Request(OFFICIAL_URL, data=body, headers={
+                    "Content-Type": "application/json; charset=utf-8",
+                    "User-Agent": "mega-millions-generator"})
+                with urllib.request.urlopen(req, timeout=60) as resp:
+                    data = json.loads(json.loads(resp.read().decode("utf-8"))["d"])
+                total = data["TotalResults"]
+                if not data["DrawingData"]:
+                    break
+                for r in data["DrawingData"]:
+                    rows.append({
+                        "draw_date": r["PlayDate"][:10],
+                        **{f"n{i}": r[f"N{i}"] for i in range(1, 6)},
+                        "mega_ball": r["MBall"],
+                        "megaplier": r["Megaplier"] if r["Megaplier"] and r["Megaplier"] > 0 else "",
+                    })
+                page += 1
+            if len(rows) < total:
+                raise ValueError(f"got {len(rows)} of {total} draws")
+            rows.sort(key=lambda r: r["draw_date"])
+            with OFFICIAL_CSV_PATH.open("w", newline="", encoding="utf-8") as f:
+                w = csv.DictWriter(f, fieldnames=OFFICIAL_COLUMNS)
+                w.writeheader()
+                w.writerows(rows)
+            print(f"Downloaded {len(rows):,} official draws -> {OFFICIAL_CSV_PATH.relative_to(HERE)}")
+            return rows
+        except Exception as exc:
+            print(f"Official download failed ({exc}); using saved CSV.", file=sys.stderr)
+    if not OFFICIAL_CSV_PATH.exists():
+        print("No official data saved; using NY data only.", file=sys.stderr)
+        return []
+    with OFFICIAL_CSV_PATH.open(encoding="utf-8") as f:
+        return list(csv.DictReader(f))
+
+
+def parse_draws(text: str, official: list[dict]) -> list[tuple]:
+    """Combine NY open data with the official site; official wins on overlap."""
+    rows = {}
     for rec in csv.DictReader(io.StringIO(text)):
         date = datetime.strptime(rec["Draw Date"].strip(), "%m/%d/%Y").date().isoformat()
         whites = sorted(int(x) for x in rec["Winning Numbers"].split())
@@ -77,9 +129,14 @@ def parse_draws(text: str) -> list[tuple]:
             continue
         mega = int(rec["Mega Ball"])
         mult = (rec.get("Multiplier") or "").strip()
-        rows.append((date, *whites, mega, int(mult) if mult.isdigit() else None))
-    rows.sort()
-    return rows
+        rows[date] = (date, *whites, mega, int(mult) if mult.isdigit() else None, "ny_open_data")
+
+    for rec in official:
+        whites = sorted(int(rec[f"n{i}"]) for i in range(1, 6))
+        mult = str(rec["megaplier"]).strip()
+        rows[rec["draw_date"]] = (rec["draw_date"], *whites, int(rec["mega_ball"]),
+                                  int(mult) if mult.isdigit() else None, "megamillions_com")
+    return sorted(rows.values())
 
 
 def build_db(draws: list[tuple]) -> sqlite3.Connection:
@@ -88,7 +145,7 @@ def build_db(draws: list[tuple]) -> sqlite3.Connection:
         DB_PATH.unlink()
     con = sqlite3.connect(DB_PATH)
     con.executescript((SQL_DIR / "schema.sql").read_text())
-    con.executemany("INSERT OR REPLACE INTO draws VALUES (?,?,?,?,?,?,?,?)", draws)
+    con.executemany("INSERT OR REPLACE INTO draws VALUES (?,?,?,?,?,?,?,?,?)", draws)
     con.executemany(
         "INSERT INTO draw_numbers VALUES (?,?,?)",
         [(d[0], "white", n) for d in draws for n in d[1:6]] + [(d[0], "mega", d[6]) for d in draws],
@@ -172,7 +229,10 @@ def write_report(con, whites, megas, tickets, recent) -> str:
         "# Mega Millions picks for the next draw",
         "",
         f"_Generated {datetime.now(timezone.utc):%Y-%m-%d %H:%M} UTC from **{total:,} draws** "
-        f"({first} to {last})._",
+        f"({first} to {last}): "
+        + ", ".join(f"{n:,} from {src}" for src, n in
+                    con.execute("SELECT source, COUNT(*) FROM draws GROUP BY source ORDER BY source DESC"))
+        + "._",
         "",
         f"**Latest draw ({latest[0]}):** {fmt(latest[1:6])}  Mega Ball **{latest[6]:02d}**",
         "",
@@ -220,10 +280,10 @@ def main() -> None:
     ap.add_argument("--tickets", type=int, default=5, help="number of tickets to generate (default 5)")
     ap.add_argument("--recent", type=int, default=100, help="draws counted as 'recent' (default 100)")
     ap.add_argument("--seed", type=int, help="random seed (default: latest draw date, so picks are stable per draw)")
-    ap.add_argument("--offline", action="store_true", help="skip download, use data/mega_millions_draws.csv")
+    ap.add_argument("--offline", action="store_true", help="skip downloads, use the saved CSVs in data/")
     args = ap.parse_args()
 
-    draws = parse_draws(fetch_csv(args.offline))
+    draws = parse_draws(fetch_csv(args.offline), fetch_official(args.offline))
     con = build_db(draws)
     whites = number_stats(con, "white", args.recent)
     megas = number_stats(con, "mega", args.recent)

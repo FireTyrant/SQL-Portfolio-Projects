@@ -1,6 +1,6 @@
 # 🎱 Project 2: Mega Millions Number Generator
 
-A number generator built on **every Mega Millions draw ever held**: 2,554+ drawings from the first one on
+A number generator built on **every Mega Millions draw ever held**: 2,555+ drawings from the first one on
 **May 17, 2002** to today. It loads the full history into SQLite, scores every number with SQL, and
 suggests tickets for the next draw. Re-run it after each draw (or let GitHub Actions do it) to get fresh picks.
 
@@ -18,10 +18,27 @@ python3 mega_millions.py --offline    # use the saved CSV, no download
 
 Only Python's standard library is needed (no installs).
 
-## Data source
+## Data sources
 
-[NY Open Data – Lottery Mega Millions Winning Numbers: Beginning 2002](https://data.ny.gov/Government-Finance/Lottery-Mega-Millions-Winning-Numbers-Beginning-20/5xaw-6ayf).
-A snapshot is saved in [`data/mega_millions_draws.csv`](data/mega_millions_draws.csv) and refreshed on every run.
+| Draws | Source | File |
+|---|---|---|
+| Feb 2, 2010 → today | [megamillions.com](https://www.megamillions.com/Winning-Numbers/Previous-Drawings.aspx), the official site (posts results within minutes of each draw) | [`data/mega_millions_official.csv`](data/mega_millions_official.csv) |
+| May 17, 2002 → Jan 29, 2010 | [NY Open Data – Lottery Mega Millions Winning Numbers: Beginning 2002](https://data.ny.gov/Government-Finance/Lottery-Mega-Millions-Winning-Numbers-Beginning-20/5xaw-6ayf) (the official site doesn't go back before 2010) | [`data/mega_millions_draws.csv`](data/mega_millions_draws.csv) |
+
+Both are downloaded fresh on every run. Where both sources have a draw, the official site wins. I checked the sources
+against each other and against the [Texas Lottery](https://www.texaslottery.com/export/sites/lottery/Games/Mega_Millions/Winning_Numbers/)
+download:
+
+- 1,747 of 1,749 overlapping draws match. **NY Open Data has 2 errors**, which megamillions.com and Texas agree on:
+
+  | Draw | NY Open Data (wrong) | megamillions.com and Texas |
+  |---|---|---|
+  | Sep 23, 2011 | 27 **31** 32 40 52 | **21** 27 32 40 52 |
+  | May 10, 2022 | Mega Ball **06** | Mega Ball **09** |
+
+- All 643 pre-2010 NY draws that Texas also has (Dec 2003 onward) match exactly.
+
+The `draws.source` column records where each row came from.
 
 ## The SQL
 

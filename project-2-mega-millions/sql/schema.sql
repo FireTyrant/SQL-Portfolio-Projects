@@ -27,7 +27,8 @@ CREATE TABLE draws (
     n1 INTEGER NOT NULL, n2 INTEGER NOT NULL, n3 INTEGER NOT NULL,
     n4 INTEGER NOT NULL, n5 INTEGER NOT NULL,
     mega_ball  INTEGER NOT NULL,
-    multiplier INTEGER             -- NULL when not offered / not reported
+    multiplier INTEGER,            -- NULL when not offered / not reported
+    source     TEXT NOT NULL       -- 'megamillions_com' (official) or 'ny_open_data'
 );
 
 -- Long (normalized) form: one row per ball drawn. Makes counting easy.
