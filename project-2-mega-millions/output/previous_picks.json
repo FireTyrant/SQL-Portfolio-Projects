@@ -1,0 +1,73 @@
+{
+  "game": "Mega Millions",
+  "ball_name": "Mega Ball",
+  "latest_draw": {
+    "date": "2026-11-03",
+    "white": [
+      4,
+      24,
+      31,
+      62,
+      70
+    ],
+    "ball": 3
+  },
+  "tickets": [
+    {
+      "method": "Top scores",
+      "white": [
+        30,
+        39,
+        43,
+        52,
+        59
+      ],
+      "ball": 12
+    },
+    {
+      "method": "Weighted",
+      "white": [
+        14,
+        34,
+        36,
+        37,
+        39
+      ],
+      "ball": 12
+    },
+    {
+      "method": "Weighted",
+      "white": [
+        2,
+        15,
+        20,
+        22,
+        43
+      ],
+      "ball": 7
+    },
+    {
+      "method": "Weighted",
+      "white": [
+        16,
+        34,
+        38,
+        47,
+        50
+      ],
+      "ball": 19
+    },
+    {
+      "method": "Weighted",
+      "white": [
+        18,
+        36,
+        39,
+        43,
+        68
+      ],
+      "ball": 12
+    }
+  ],
+  "note": "Picks published in commit db8a9a7, made from draws up to 2026-11-03."
+}

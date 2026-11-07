@@ -3,9 +3,25 @@
 Updated automatically about an hour after every Mega Millions and Powerball draw, using results pulled
 directly from [megamillions.com](https://www.megamillions.com/) and [powerball.com](https://www.powerball.com/).
 
-## Mega Millions: next draw Tue Nov 10, 2026 at 11:00 PM ET
+## Mega Millions
 
-Latest result (Fri Nov 6, 2026): **27 34 44 53 64**, Mega Ball **01**  
+### How the last picks did: Fri Nov 6, 2026
+
+Result: **27 34 44 53 64**, Mega Ball **01**  
+🟢 = matched, 🔴 = didn't match
+
+| # | White balls | Mega Ball | Matches | Prize |
+|---:|---|---|---|---|
+| 1 | 🔴30 🔴39 🔴43 🔴52 🔴59 | 🔴12 | 0 | No |
+| 2 | 🔴14 🟢**34** 🔴36 🔴37 🔴39 | 🔴12 | 1 white | No |
+| 3 | 🔴02 🔴15 🔴20 🔴22 🔴43 | 🔴07 | 0 | No |
+| 4 | 🔴16 🟢**34** 🔴38 🔴47 🔴50 | 🔴19 | 1 white | No |
+| 5 | 🔴18 🔴36 🔴39 🔴43 🔴68 | 🔴12 | 0 | No |
+
+**Running total** (1 draw, 5 tickets): 2 white-ball matches (0.40 per ticket; pure chance is 0.36), 0 Mega Ball matches, 0 prizes.
+
+### Picks for the next draw: Tue Nov 10, 2026 at 11:00 PM ET
+
 Based on 2,555 draws since Fri May 17, 2002.
 
 | # | White balls | Mega Ball |
@@ -18,9 +34,14 @@ Based on 2,555 draws since Fri May 17, 2002.
 
 Full report: [project-2-mega-millions/output/latest_picks.md](project-2-mega-millions/output/latest_picks.md)
 
-## Powerball: next draw Sat Nov 7, 2026 at 10:59 PM ET
+## Powerball
 
-Latest result (Wed Nov 4, 2026): **15 34 41 53 56**, Powerball **21**  
+### How the last picks did
+
+_No draw has happened since these picks were first made. Check back after the next draw._
+
+### Picks for the next draw: Sat Nov 7, 2026 at 10:59 PM ET
+
 Based on 3,877 draws since Wed Apr 22, 1992.
 
 | # | White balls | Powerball |
