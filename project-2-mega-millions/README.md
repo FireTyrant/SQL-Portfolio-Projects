@@ -92,7 +92,8 @@ your odds, but it may mean sharing less if you win.
 [`.github/workflows/lottery-picks.yml`](../.github/workflows/lottery-picks.yml) runs about **1 hour after every
 Mega Millions and Powerball draw**. Each run pulls new results straight from megamillions.com and powerball.com,
 updates the picks for **both** games, and publishes 5 tickets for each in [`LATEST_PICKS.md`](../LATEST_PICKS.md).
-A run that finds no new draw saves nothing. It can also be run by hand from the **Actions** tab.
+Each update also checks the previous picks against the new result, with matches in 🟢 green and misses in 🔴
+red, and keeps a running total in `output/pick_history.json`. A run that finds no new draw saves nothing. It can also be run by hand from the **Actions** tab.
 
 ## ⚠️ Reality check
 

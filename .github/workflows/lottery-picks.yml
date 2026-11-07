@@ -48,8 +48,9 @@ jobs:
             echo "No new draw yet."
           else
             git add project-2-mega-millions/data project-3-powerball/data \
-                    project-2-mega-millions/output/latest_picks.* \
-                    project-3-powerball/output/latest_picks.* LATEST_PICKS.md
+                    project-2-mega-millions/output/*.json project-2-mega-millions/output/latest_picks.md \
+                    project-3-powerball/output/*.json project-3-powerball/output/latest_picks.md \
+                    LATEST_PICKS.md
             git commit -m "Update lottery picks after latest draw"
             git pull --rebase origin "${GITHUB_REF_NAME}"
             git push

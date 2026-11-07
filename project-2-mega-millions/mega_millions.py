@@ -44,6 +44,7 @@ OUT_DIR = HERE / "output"
 DB_PATH = OUT_DIR / "mega_millions.db"
 PICKS_PATH = OUT_DIR / "latest_picks.md"
 PICKS_JSON_PATH = OUT_DIR / "latest_picks.json"  # read by ../publish_picks.py
+PREVIOUS_PICKS_JSON_PATH = OUT_DIR / "previous_picks.json"  # last picks, to check against new draws
 GAME_NAME = "Mega Millions"
 BALL_NAME = "Mega Ball"
 DRAW_WEEKDAYS = (1, 4)  # Tuesday, Friday
@@ -197,6 +198,11 @@ def next_draw(latest: str) -> str:
 
 def write_json(draws, tickets) -> None:
     latest = draws[-1]
+    # Keep the picks made before this draw so publish_picks.py can check them.
+    if PICKS_JSON_PATH.exists():
+        old = json.loads(PICKS_JSON_PATH.read_text(encoding="utf-8"))
+        if old["latest_draw"]["date"] < latest[0]:
+            PREVIOUS_PICKS_JSON_PATH.write_text(json.dumps(old, indent=2) + "\n", encoding="utf-8")
     PICKS_JSON_PATH.write_text(json.dumps({
         "game": GAME_NAME,
         "ball_name": BALL_NAME,
@@ -205,6 +211,7 @@ def write_json(draws, tickets) -> None:
         "latest_draw": {"date": latest[0], "white": list(latest[1:6]), "ball": latest[6]},
         "next_draw": {"date": next_draw(latest[0]), "time": DRAW_TIME},
         "tickets": [{"method": m, "white": w, "ball": b} for m, w, b in tickets],
+        "recent_draws": [{"date": d[0], "white": list(d[1:6]), "ball": d[6]} for d in draws[-20:]],
     }, indent=2) + "\n", encoding="utf-8")
 
 
