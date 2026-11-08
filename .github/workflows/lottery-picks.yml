@@ -11,11 +11,13 @@ name: Lottery picks
 # (Sun, Tue, Wed, Thu, Sat). Both times are scheduled so the 1-hour run
 # happens all year; a run that finds no new draw commits nothing.
 # The 06:00 UTC run is a retry in case a site posted late.
+# Runs are at :07, not :00: GitHub often delays or skips scheduled runs at the
+# top of the hour, when it is busiest.
 on:
   schedule:
-    - cron: "0 4 * * 0,2,3,4,6"
-    - cron: "0 5 * * 0,2,3,4,6"
-    - cron: "0 6 * * 0,2,3,4,6"
+    - cron: "7 4 * * 0,2,3,4,6"
+    - cron: "7 5 * * 0,2,3,4,6"
+    - cron: "7 6 * * 0,2,3,4,6"
   workflow_dispatch:
 
 permissions:
