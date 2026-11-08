@@ -36,21 +36,32 @@ Full report: [project-2-mega-millions/output/latest_picks.md](project-2-mega-mil
 
 ## Powerball
 
-### How the last picks did
+### How the last picks did: Sat Nov 7, 2026
 
-_No draw has happened since these picks were first made. Check back after the next draw._
+Result: **03 36 37 56 61**, Powerball **21**  
+🟢 = matched, 🔴 = didn't match
 
-### Picks for the next draw: Sat Nov 7, 2026 at 10:59 PM ET
+| # | White balls | Powerball | Matches | Prize |
+|---:|---|---|---|---|
+| 1 | 🔴42 🔴59 🟢**61** 🔴63 🔴64 | 🔴03 | 1 white | No |
+| 2 | 🟢**03** 🔴04 🔴09 🔴14 🔴39 | 🔴03 | 1 white | No |
+| 3 | 🔴06 🔴12 🔴24 🔴53 🔴59 | 🔴12 | 0 | No |
+| 4 | 🔴14 🔴22 🔴34 🔴50 🔴64 | 🔴18 | 0 | No |
+| 5 | 🔴21 🟢**36** 🟢**61** 🔴68 🔴69 | 🔴03 | 2 white | No |
 
-Based on 3,877 draws since Wed Apr 22, 1992.
+**Running total** (1 draw, 5 tickets): 4 white-ball matches (0.80 per ticket; pure chance is 0.36), 0 Powerball matches, 0 prizes.
+
+### Picks for the next draw: Mon Nov 9, 2026 at 10:59 PM ET
+
+Based on 3,878 draws since Wed Apr 22, 1992.
 
 | # | White balls | Powerball |
 |---:|---|---:|
-| 1 | **42 59 61 63 64** | **03** |
-| 2 | **03 04 09 14 39** | **03** |
-| 3 | **06 12 24 53 59** | **12** |
-| 4 | **14 22 34 50 64** | **18** |
-| 5 | **21 36 61 68 69** | **03** |
+| 1 | **17 42 59 63 64** | **03** |
+| 2 | **17 20 21 36 62** | **02** |
+| 3 | **04 09 14 59 63** | **03** |
+| 4 | **04 17 57 65 66** | **23** |
+| 5 | **18 46 47 52 62** | **03** |
 
 Full report: [project-3-powerball/output/latest_picks.md](project-3-powerball/output/latest_picks.md)
 
