@@ -82,42 +82,40 @@ def ticket_row(i, t, ball_name):
     return f"| {i} | {whites} | {ball} | {label} | {t['prize']} |"
 
 
-def render_check(game, history):
-    name, ball = game["game"], game["ball_name"]
-    if not history:
-        return [f"### How the last picks did", "",
-                "_No draw has happened since these picks were first made. Check back after the next draw._", ""]
-    last = history[-1]
-    r = last["result"]
+def check_table(game, last):
+    ball, r = game["ball_name"], last["result"]
     lines = [
-        f"### How the last picks did: {nice(last['draw_date'])}",
-        "",
         f"Result: **{fmt(r['white'])}**, {ball} **{r['ball']:02d}**  ",
         f"{GREEN} = matched, {RED} = didn't match",
         "",
         f"| # | White balls | {ball} | Matches | Prize |",
         "|---:|---|---|---|---|",
     ]
-    lines += [ticket_row(i, t, ball) for i, t in enumerate(last["tickets"], 1)]
+    return lines + [ticket_row(i, t, ball) for i, t in enumerate(last["tickets"], 1)] + [""]
 
+
+def running_total(game, history):
+    name, ball = game["game"], game["ball_name"]
+    if not history:
+        return f"- **{name}:** no draws checked yet."
     tickets = [t for h in history for t in h["tickets"]]
     white_hits = sum(len(t["white_hits"]) for t in tickets)
     ball_hits = sum(t["ball_hit"] for t in tickets)
     prizes = sum(t["prize"] != "No" for t in tickets)
     chance = 5 * 5 / WHITE_MAX[name]
-    lines += [
-        "",
-        f"**Running total** ({len(history)} draw{'s' if len(history) != 1 else ''}, {len(tickets)} tickets): "
-        f"{white_hits} white-ball match{'es' if white_hits != 1 else ''} "
-        f"({white_hits / len(tickets):.2f} per ticket; pure chance is {chance:.2f}), "
-        f"{ball_hits} {ball} match{'es' if ball_hits != 1 else ''}, "
-        f"{prizes} prize{'s' if prizes != 1 else ''}.",
-        "",
-    ]
-    return lines
+    return (f"- **{name}** ({len(history)} draw{'s' if len(history) != 1 else ''}, {len(tickets)} tickets): "
+            f"{white_hits} white-ball match{'es' if white_hits != 1 else ''} "
+            f"({white_hits / len(tickets):.2f} per ticket; pure chance is {chance:.2f}), "
+            f"{ball_hits} {ball} match{'es' if ball_hits != 1 else ''}, "
+            f"{prizes} prize{'s' if prizes != 1 else ''}.")
 
 
 def main():
+    games = []
+    for game_dir in GAME_DIRS:
+        game = load(game_dir / "output" / "latest_picks.json")
+        games.append((game_dir, game, update_history(game_dir, game)))
+
     lines = [
         "# 🎱 Latest lottery picks",
         "",
@@ -125,22 +123,37 @@ def main():
         "directly from [megamillions.com](https://www.megamillions.com/) and [powerball.com](https://www.powerball.com/).",
         "",
     ]
-    for game_dir in GAME_DIRS:
-        game = load(game_dir / "output" / "latest_picks.json")
-        history = update_history(game_dir, game)
+
+    # 1. The most recent draw from either game, checked against the picks made for it.
+    checked = [(h[-1], g) for _, g, h in games if h]
+    if checked:
+        last, game = max(checked, key=lambda x: x[0]["draw_date"])
+        lines += [f"## Most recent draw: {game['game']}, {nice(last['draw_date'])}", ""]
+        lines += check_table(game, last)
+    else:
+        lines += ["## Most recent draw", "", "_No draws have been checked yet._", ""]
+
+    # 2. New picks for both games.
+    lines += ["## Next picks", ""]
+    for game_dir, game, _ in games:
         nxt = game["next_draw"]
-        lines += [f"## {game['game']}", ""]
-        lines += render_check(game, history)
         lines += [
-            f"### Picks for the next draw: {nice(nxt['date'])} at {nxt['time']}",
-            "",
-            f"Based on {game['draws_used']:,} draws since {nice(game['first_draw'])}.",
+            f"### {game['game']}: {nice(nxt['date'])} at {nxt['time']}",
             "",
             f"| # | White balls | {game['ball_name']} |",
             "|---:|---|---:|",
         ]
         lines += [f"| {i} | **{fmt(t['white'])}** | **{t['ball']:02d}** |" for i, t in enumerate(game["tickets"], 1)]
-        lines += ["", f"Full report: [{game_dir.name}/output/latest_picks.md]({game_dir.name}/output/latest_picks.md)", ""]
+        lines += ["", f"Based on {game['draws_used']:,} draws since {nice(game['first_draw'])}. "
+                      f"Full report: [{game_dir.name}/output/latest_picks.md]({game_dir.name}/output/latest_picks.md)", ""]
+
+    # 3. Running totals, and the other game's latest check for reference.
+    lines += ["## Running totals", ""] + [running_total(g, h) for _, g, h in games] + [""]
+    others = [(h[-1], g) for _, g, h in games if h and (not checked or h[-1] is not last)]
+    for prev_last, game in others:
+        lines += [f"<details><summary>Earlier check: {game['game']}, {nice(prev_last['draw_date'])}</summary>", ""]
+        lines += check_table(game, prev_last) + ["</details>", ""]
+
     lines += [
         "---",
         "",

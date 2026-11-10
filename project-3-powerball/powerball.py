@@ -36,6 +36,10 @@ from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
 OFFICIAL_URL = "https://www.powerball.com/previous-results"
+# The homepage's "Winning Numbers" card shows a new draw well before the
+# previous-results pages do, so it is checked too.
+LATEST_URL = "https://www.powerball.com/v1/gameapi/numbers?gamecode=powerball&language=en"
+LATEST_DATE_RE = re.compile(r'title-date">\s*[A-Za-z]{3}, ([A-Za-z]{3} \d{1,2}, \d{4})\s*<')
 FIRST_DRAW = "1992-04-22"
 REFETCH_DAYS = 30  # re-download the last month each run, in case of corrections
 
@@ -86,6 +90,19 @@ def parse_card(date: str, html: str) -> dict:
     return row
 
 
+def fetch_latest() -> dict | None:
+    """The newest draw from the homepage card, or None if it can't be read."""
+    req = urllib.request.Request(LATEST_URL, headers={
+        "User-Agent": "powerball-generator", "X-Requested-With": "XMLHttpRequest"})
+    with urllib.request.urlopen(req, timeout=60) as resp:
+        html = resp.read().decode("utf-8")
+    m = LATEST_DATE_RE.search(html)
+    if not m:
+        return None
+    row = parse_card(datetime.strptime(m.group(1), "%b %d, %Y").date().isoformat(), html)
+    return row if row["n1"] and row["powerball"] else None
+
+
 def fetch_official(offline: bool) -> list[dict]:
     """Every draw on powerball.com. After the first run only recent pages are fetched."""
     saved = {}
@@ -109,6 +126,14 @@ def fetch_official(offline: bool) -> list[dict]:
                 new += d not in saved
                 saved[d] = parse_card(d, html)
             time.sleep(0.5)  # be polite to the site
+        try:
+            latest = fetch_latest()
+            if latest and latest["draw_date"] not in saved:
+                saved[latest["draw_date"]] = latest
+                new += 1
+                print(f"powerball.com homepage: new draw {latest['draw_date']}")
+        except Exception as exc:
+            print(f"Couldn't read the homepage's latest draw ({exc}).", file=sys.stderr)
         rows = sorted(saved.values(), key=lambda r: r["draw_date"])
         OFFICIAL_CSV_PATH.parent.mkdir(parents=True, exist_ok=True)
         with OFFICIAL_CSV_PATH.open("w", newline="", encoding="utf-8") as f:
