@@ -1,21 +1,21 @@
 {
   "game": "Powerball",
   "ball_name": "Powerball",
-  "draws_used": 3878,
+  "draws_used": 3879,
   "first_draw": "1992-04-22",
   "latest_draw": {
-    "date": "2026-11-07",
+    "date": "2026-11-09",
     "white": [
-      3,
-      36,
-      37,
-      56,
-      61
+      13,
+      34,
+      41,
+      45,
+      48
     ],
-    "ball": 21
+    "ball": 25
   },
   "next_draw": {
-    "date": "2026-11-09",
+    "date": "2026-11-11",
     "time": "10:59 PM ET"
   },
   "tickets": [
@@ -33,60 +33,49 @@
     {
       "method": "Weighted",
       "white": [
-        17,
-        20,
-        21,
-        36,
-        62
-      ],
-      "ball": 2
-    },
-    {
-      "method": "Weighted",
-      "white": [
-        4,
-        9,
-        14,
-        59,
-        63
-      ],
-      "ball": 3
-    },
-    {
-      "method": "Weighted",
-      "white": [
-        4,
-        17,
-        57,
-        65,
-        66
-      ],
-      "ball": 23
-    },
-    {
-      "method": "Weighted",
-      "white": [
-        18,
-        46,
-        47,
+        24,
+        30,
+        50,
         52,
-        62
+        65
       ],
-      "ball": 3
-    }
-  ],
-  "recent_draws": [
+      "ball": 7
+    },
     {
-      "date": "2026-09-23",
+      "method": "Weighted",
       "white": [
-        5,
-        15,
-        26,
-        29,
-        30
+        14,
+        34,
+        45,
+        54,
+        65
       ],
       "ball": 14
     },
+    {
+      "method": "Weighted",
+      "white": [
+        2,
+        21,
+        53,
+        58,
+        62
+      ],
+      "ball": 20
+    },
+    {
+      "method": "Weighted",
+      "white": [
+        9,
+        13,
+        30,
+        45,
+        52
+      ],
+      "ball": 15
+    }
+  ],
+  "recent_draws": [
     {
       "date": "2026-09-26",
       "white": [
@@ -295,6 +284,17 @@
         61
       ],
       "ball": 21
+    },
+    {
+      "date": "2026-11-09",
+      "white": [
+        13,
+        34,
+        41,
+        45,
+        48
+      ],
+      "ball": 25
     }
   ]
 }
