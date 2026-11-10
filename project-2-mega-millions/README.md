@@ -2,7 +2,7 @@
 
 A number generator built on **every Mega Millions draw ever held**: 2,555+ drawings from the first one on
 **May 17, 2002** to today. It loads the full history into SQLite, scores every number with SQL, and
-suggests tickets for the next draw. It refreshes automatically about an hour after every draw.
+suggests tickets for the next draw. It refreshes automatically every morning after a draw.
 
 👉 **Latest picks:** [`output/latest_picks.md`](output/latest_picks.md)
 
@@ -87,10 +87,10 @@ every prize below the jackpot is pari-mutuel (based on how many people won it), 
 means splitting the prize more ways. Many players choose birthdays (1–31). Picking numbers **above 31** doesn't change
 your odds, but it may mean sharing less if you win.
 
-## Auto-update after every draw
+## Auto-update every morning
 
-[`.github/workflows/lottery-picks.yml`](../.github/workflows/lottery-picks.yml) runs about **1 hour after every
-Mega Millions and Powerball draw**. Each run pulls new results straight from megamillions.com and powerball.com,
+[`.github/workflows/lottery-picks.yml`](../.github/workflows/lottery-picks.yml) runs **every morning**
+(6:17 AM California time in winter, 7:17 AM in summer, with a retry at 10:17/11:17 AM). Each run pulls new results straight from megamillions.com and powerball.com,
 updates the picks for **both** games, and publishes 5 tickets for each in [`LATEST_PICKS.md`](../LATEST_PICKS.md).
 Each update also checks the previous picks against the new result, with matches in 🟢 green and misses in 🔴
 red, and keeps a running total in `output/pick_history.json`. A run that finds no new draw saves nothing. It can also be run by hand from the **Actions** tab.

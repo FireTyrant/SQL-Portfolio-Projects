@@ -1,23 +1,20 @@
 name: Lottery picks
 
-# Pulls new results from megamillions.com and powerball.com about an hour after
-# every draw and updates the picks for BOTH games each time.
+# Pulls new results from megamillions.com and powerball.com every morning and
+# updates the picks for BOTH games, so the page is current well before the next
+# evening's draw.
 #
-# Draws (Eastern Time):
-#   Powerball      Mon, Wed, Sat  10:59 PM
-#   Mega Millions  Tue, Fri       11:00 PM
-# One hour later is about midnight ET = 04:00 UTC in daylight time
-# (Mar-Nov) or 05:00 UTC in standard time (Nov-Mar), on the next UTC day
-# (Sun, Tue, Wed, Thu, Sat). Both times are scheduled so the 1-hour run
-# happens all year; a run that finds no new draw commits nothing.
-# The 06:00 UTC run is a retry in case a site posted late.
-# Runs are at :07, not :00: GitHub often delays or skips scheduled runs at the
-# top of the hour, when it is busiest.
+# Draws (California time):
+#   Powerball      Mon, Wed, Sat  7:59 PM
+#   Mega Millions  Tue, Fri       8:00 PM
+# Runs every day at 14:17 UTC (6:17 AM PST / 7:17 AM PDT), with a retry at
+# 18:17 UTC in case GitHub skipped the first run. A run that finds no new
+# draw commits nothing. Runs are at :17, not :00: GitHub most often delays
+# or skips scheduled runs at the top of the hour.
 on:
   schedule:
-    - cron: "7 4 * * 0,2,3,4,6"
-    - cron: "7 5 * * 0,2,3,4,6"
-    - cron: "7 6 * * 0,2,3,4,6"
+    - cron: "17 14 * * *"
+    - cron: "17 18 * * *"
   workflow_dispatch:
 
 permissions:
