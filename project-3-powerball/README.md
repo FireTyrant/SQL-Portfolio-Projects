@@ -78,10 +78,10 @@ The numbers drawn are the same in every state, so the picks don't change. Two th
   people pick the same numbers, a prize gets split more ways. Many players choose birthdays (1–31). Numbers
   **above 31** don't change your odds of winning, but they may mean sharing less if you do.
 
-## Auto-update after every draw
+## Auto-update every morning
 
-[`.github/workflows/lottery-picks.yml`](../.github/workflows/lottery-picks.yml) runs about **1 hour after every
-Mega Millions and Powerball draw**. Each run pulls new results straight from megamillions.com and powerball.com,
+[`.github/workflows/lottery-picks.yml`](../.github/workflows/lottery-picks.yml) runs **every morning**
+(6:17 AM California time in winter, 7:17 AM in summer, with a retry at 10:17/11:17 AM). Each run pulls new results straight from megamillions.com and powerball.com,
 updates the picks for **both** games, and publishes 5 tickets for each in [`LATEST_PICKS.md`](../LATEST_PICKS.md).
 Each update also checks the previous picks against the new result, with matches in 🟢 green and misses in 🔴
 red, and keeps a running total in `output/pick_history.json`. A run that finds no new draw saves nothing. It can also be run by hand from the **Actions** tab.

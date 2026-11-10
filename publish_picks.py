@@ -119,7 +119,7 @@ def main():
     lines = [
         "# 🎱 Latest lottery picks",
         "",
-        "Updated automatically about an hour after every Mega Millions and Powerball draw, using results pulled",
+        "Updated automatically every morning after a Mega Millions or Powerball draw, using results pulled",
         "directly from [megamillions.com](https://www.megamillions.com/) and [powerball.com](https://www.powerball.com/).",
         "",
     ]

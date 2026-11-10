@@ -29,7 +29,7 @@ Other: Python (for automation) | GitHub | Google Cloud
 
 📁 Projects
 
-🎱 Latest lottery picks (updated an hour after every draw): LATEST_PICKS.md
+🎱 Latest lottery picks (updated every morning after a draw): LATEST_PICKS.md
 
 Project 1 – San Francisco 311 data prep (project-1/)
 
