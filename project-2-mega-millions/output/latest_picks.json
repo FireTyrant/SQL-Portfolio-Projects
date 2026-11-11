@@ -1,28 +1,28 @@
 {
   "game": "Mega Millions",
   "ball_name": "Mega Ball",
-  "draws_used": 2555,
+  "draws_used": 2554,
   "first_draw": "2002-05-17",
   "latest_draw": {
-    "date": "2026-11-06",
+    "date": "2026-11-10",
     "white": [
-      27,
-      34,
-      44,
-      53,
-      64
+      2,
+      18,
+      25,
+      30,
+      65
     ],
-    "ball": 1
+    "ball": 22
   },
   "next_draw": {
-    "date": "2026-11-10",
+    "date": "2026-11-13",
     "time": "11:00 PM ET"
   },
   "tickets": [
     {
       "method": "Top scores",
       "white": [
-        30,
+        17,
         39,
         43,
         52,
@@ -33,60 +33,49 @@
     {
       "method": "Weighted",
       "white": [
-        11,
-        18,
-        43,
-        60,
-        63
-      ],
-      "ball": 5
-    },
-    {
-      "method": "Weighted",
-      "white": [
         8,
-        17,
-        30,
+        9,
+        36,
         49,
-        59
+        53
       ],
-      "ball": 12
+      "ball": 24
     },
     {
       "method": "Weighted",
       "white": [
-        19,
-        47,
-        52,
-        59,
-        65
-      ],
-      "ball": 15
-    },
-    {
-      "method": "Weighted",
-      "white": [
-        23,
-        31,
-        42,
-        59,
-        69
+        20,
+        26,
+        38,
+        50,
+        58
       ],
       "ball": 4
+    },
+    {
+      "method": "Weighted",
+      "white": [
+        48,
+        53,
+        60,
+        61,
+        64
+      ],
+      "ball": 7
+    },
+    {
+      "method": "Weighted",
+      "white": [
+        20,
+        34,
+        44,
+        51,
+        68
+      ],
+      "ball": 21
     }
   ],
   "recent_draws": [
-    {
-      "date": "2026-09-01",
-      "white": [
-        1,
-        22,
-        51,
-        61,
-        63
-      ],
-      "ball": 17
-    },
     {
       "date": "2026-09-04",
       "white": [
@@ -295,6 +284,17 @@
         64
       ],
       "ball": 1
+    },
+    {
+      "date": "2026-11-10",
+      "white": [
+        2,
+        18,
+        25,
+        30,
+        65
+      ],
+      "ball": 22
     }
   ]
 }
