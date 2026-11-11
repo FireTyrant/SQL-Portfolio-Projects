@@ -1,7 +1,7 @@
 {
   "game": "Mega Millions",
   "ball_name": "Mega Ball",
-  "draws_used": 2554,
+  "draws_used": 2556,
   "first_draw": "2002-05-17",
   "latest_draw": {
     "date": "2026-11-10",
@@ -45,7 +45,7 @@
       "method": "Weighted",
       "white": [
         20,
-        26,
+        30,
         38,
         50,
         58
