@@ -1,6 +1,6 @@
 # Mega Millions picks for the next draw
 
-_Generated 2026-11-11 21:26 UTC from **2,556 draws** (2002-05-17 to 2026-11-10): 805 from ny_2002_2010, 1,751 from megamillions_com._
+_Generated 2026-11-12 18:25 UTC from **2,556 draws** (2002-05-17 to 2026-11-10): 805 from ny_2002_2010, 1,751 from megamillions_com._
 
 **Latest draw (2026-11-10):** 02 18 25 30 65  Mega Ball **22**
 
