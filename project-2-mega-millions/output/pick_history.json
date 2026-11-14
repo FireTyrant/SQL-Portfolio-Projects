@@ -184,5 +184,94 @@
         "prize": "No"
       }
     ]
+  },
+  {
+    "draw_date": "2026-11-13",
+    "result": {
+      "date": "2026-11-13",
+      "white": [
+        10,
+        22,
+        33,
+        49,
+        57
+      ],
+      "ball": 18
+    },
+    "picks_made_after": "2026-11-10",
+    "tickets": [
+      {
+        "method": "Top scores",
+        "white": [
+          17,
+          39,
+          43,
+          52,
+          59
+        ],
+        "ball": 12,
+        "white_hits": [],
+        "ball_hit": false,
+        "prize": "No"
+      },
+      {
+        "method": "Weighted",
+        "white": [
+          8,
+          9,
+          36,
+          49,
+          53
+        ],
+        "ball": 24,
+        "white_hits": [
+          49
+        ],
+        "ball_hit": false,
+        "prize": "No"
+      },
+      {
+        "method": "Weighted",
+        "white": [
+          20,
+          30,
+          38,
+          50,
+          58
+        ],
+        "ball": 4,
+        "white_hits": [],
+        "ball_hit": false,
+        "prize": "No"
+      },
+      {
+        "method": "Weighted",
+        "white": [
+          48,
+          53,
+          60,
+          61,
+          64
+        ],
+        "ball": 7,
+        "white_hits": [],
+        "ball_hit": false,
+        "prize": "No"
+      },
+      {
+        "method": "Weighted",
+        "white": [
+          20,
+          34,
+          44,
+          51,
+          68
+        ],
+        "ball": 21,
+        "white_hits": [],
+        "ball_hit": false,
+        "prize": "No"
+      }
+    ]
   }
 ]
