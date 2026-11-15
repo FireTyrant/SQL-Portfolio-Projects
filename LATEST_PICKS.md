@@ -3,18 +3,18 @@
 Updated automatically every morning after a Mega Millions or Powerball draw, using results pulled
 directly from [megamillions.com](https://www.megamillions.com/) and [powerball.com](https://www.powerball.com/).
 
-## Most recent draw: Mega Millions, Fri Nov 13, 2026
+## Most recent draw: Powerball, Sat Nov 14, 2026
 
-Result: **10 22 33 49 57**, Mega Ball **18**  
+Result: **09 44 49 51 68**, Powerball **04**  
 🟢 = matched, 🔴 = didn't match
 
-| # | White balls | Mega Ball | Matches | Prize |
+| # | White balls | Powerball | Matches | Prize |
 |---:|---|---|---|---|
-| 1 | 🔴17 🔴39 🔴43 🔴52 🔴59 | 🔴12 | 0 | No |
-| 2 | 🔴08 🔴09 🔴36 🟢**49** 🔴53 | 🔴24 | 1 white | No |
-| 3 | 🔴20 🔴30 🔴38 🔴50 🔴58 | 🔴04 | 0 | No |
-| 4 | 🔴48 🔴53 🔴60 🔴61 🔴64 | 🔴07 | 0 | No |
-| 5 | 🔴20 🔴34 🔴44 🔴51 🔴68 | 🔴21 | 0 | No |
+| 1 | 🔴17 🔴30 🔴59 🔴63 🔴64 | 🔴03 | 0 | No |
+| 2 | 🔴10 🔴25 🔴35 🔴47 🔴57 | 🔴07 | 0 | No |
+| 3 | 🔴31 🔴42 🔴50 🔴59 🔴63 | 🔴26 | 0 | No |
+| 4 | 🔴16 🔴24 🔴43 🔴59 🔴63 | 🔴03 | 0 | No |
+| 5 | 🔴03 🔴25 🔴29 🔴56 🔴66 | 🔴12 | 0 | No |
 
 ## Next picks
 
@@ -30,35 +30,35 @@ Result: **10 22 33 49 57**, Mega Ball **18**
 
 Based on 2,557 draws since Fri May 17, 2002. Full report: [project-2-mega-millions/output/latest_picks.md](project-2-mega-millions/output/latest_picks.md)
 
-### Powerball: Sat Nov 14, 2026 at 10:59 PM ET
+### Powerball: Mon Nov 16, 2026 at 10:59 PM ET
 
 | # | White balls | Powerball |
 |---:|---|---:|
-| 1 | **17 30 59 63 64** | **03** |
-| 2 | **10 25 35 47 57** | **07** |
-| 3 | **31 42 50 59 63** | **26** |
-| 4 | **16 24 43 59 63** | **03** |
-| 5 | **03 25 29 56 66** | **12** |
+| 1 | **17 30 59 64 65** | **03** |
+| 2 | **33 43 44 59 65** | **03** |
+| 3 | **15 16 47 65 66** | **01** |
+| 4 | **14 16 61 62 67** | **14** |
+| 5 | **09 43 45 54 60** | **12** |
 
-Based on 3,880 draws since Wed Apr 22, 1992. Full report: [project-3-powerball/output/latest_picks.md](project-3-powerball/output/latest_picks.md)
+Based on 3,881 draws since Wed Apr 22, 1992. Full report: [project-3-powerball/output/latest_picks.md](project-3-powerball/output/latest_picks.md)
 
 ## Running totals
 
 - **Mega Millions** (3 draws, 15 tickets): 7 white-ball matches (0.47 per ticket; pure chance is 0.36), 0 Mega Ball matches, 0 prizes.
-- **Powerball** (3 draws, 15 tickets): 7 white-ball matches (0.47 per ticket; pure chance is 0.36), 0 Powerball matches, 0 prizes.
+- **Powerball** (4 draws, 20 tickets): 7 white-ball matches (0.35 per ticket; pure chance is 0.36), 0 Powerball matches, 0 prizes.
 
-<details><summary>Earlier check: Powerball, Wed Nov 11, 2026</summary>
+<details><summary>Earlier check: Mega Millions, Fri Nov 13, 2026</summary>
 
-Result: **08 42 45 51 57**, Powerball **17**  
+Result: **10 22 33 49 57**, Mega Ball **18**  
 🟢 = matched, 🔴 = didn't match
 
-| # | White balls | Powerball | Matches | Prize |
+| # | White balls | Mega Ball | Matches | Prize |
 |---:|---|---|---|---|
-| 1 | 🔴17 🟢**42** 🔴59 🔴63 🔴64 | 🔴03 | 1 white | No |
-| 2 | 🔴24 🔴30 🔴50 🔴52 🔴65 | 🔴07 | 0 | No |
-| 3 | 🔴14 🔴34 🟢**45** 🔴54 🔴65 | 🔴14 | 1 white | No |
-| 4 | 🔴02 🔴21 🔴53 🔴58 🔴62 | 🔴20 | 0 | No |
-| 5 | 🔴09 🔴13 🔴30 🟢**45** 🔴52 | 🔴15 | 1 white | No |
+| 1 | 🔴17 🔴39 🔴43 🔴52 🔴59 | 🔴12 | 0 | No |
+| 2 | 🔴08 🔴09 🔴36 🟢**49** 🔴53 | 🔴24 | 1 white | No |
+| 3 | 🔴20 🔴30 🔴38 🔴50 🔴58 | 🔴04 | 0 | No |
+| 4 | 🔴48 🔴53 🔴60 🔴61 🔴64 | 🔴07 | 0 | No |
+| 5 | 🔴20 🔴34 🔴44 🔴51 🔴68 | 🔴21 | 0 | No |
 
 </details>
 
