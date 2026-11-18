@@ -1,21 +1,21 @@
 {
   "game": "Mega Millions",
   "ball_name": "Mega Ball",
-  "draws_used": 2556,
+  "draws_used": 2557,
   "first_draw": "2002-05-17",
   "latest_draw": {
-    "date": "2026-11-10",
+    "date": "2026-11-13",
     "white": [
-      2,
-      18,
-      25,
-      30,
-      65
+      10,
+      22,
+      33,
+      49,
+      57
     ],
-    "ball": 22
+    "ball": 18
   },
   "next_draw": {
-    "date": "2026-11-13",
+    "date": "2026-11-17",
     "time": "11:00 PM ET"
   },
   "tickets": [
@@ -23,7 +23,7 @@
       "method": "Top scores",
       "white": [
         17,
-        39,
+        36,
         43,
         52,
         59
@@ -33,60 +33,49 @@
     {
       "method": "Weighted",
       "white": [
-        8,
-        9,
-        36,
-        49,
-        53
-      ],
-      "ball": 24
-    },
-    {
-      "method": "Weighted",
-      "white": [
-        20,
-        30,
-        38,
-        50,
-        58
-      ],
-      "ball": 4
-    },
-    {
-      "method": "Weighted",
-      "white": [
-        48,
-        53,
-        60,
-        61,
-        64
-      ],
-      "ball": 7
-    },
-    {
-      "method": "Weighted",
-      "white": [
-        20,
-        34,
-        44,
+        4,
+        25,
+        26,
         51,
-        68
+        59
+      ],
+      "ball": 12
+    },
+    {
+      "method": "Weighted",
+      "white": [
+        17,
+        26,
+        43,
+        51,
+        52
+      ],
+      "ball": 6
+    },
+    {
+      "method": "Weighted",
+      "white": [
+        11,
+        40,
+        41,
+        56,
+        62
+      ],
+      "ball": 13
+    },
+    {
+      "method": "Weighted",
+      "white": [
+        22,
+        48,
+        54,
+        62,
+        63
       ],
       "ball": 21
     }
   ],
   "recent_draws": [
-    {
-      "date": "2026-09-04",
-      "white": [
-        6,
-        26,
-        34,
-        59,
-        61
-      ],
-      "ball": 24
-    },
     {
       "date": "2026-09-08",
       "white": [
@@ -295,6 +284,17 @@
         65
       ],
       "ball": 22
+    },
+    {
+      "date": "2026-11-13",
+      "white": [
+        10,
+        22,
+        33,
+        49,
+        57
+      ],
+      "ball": 18
     }
   ]
 }
