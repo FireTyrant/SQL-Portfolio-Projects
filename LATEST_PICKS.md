@@ -25,10 +25,10 @@ Result: **03 10 19 28 33**, Mega Ball **21**
 | 1 | **20 36 43 52 59** | **12** |
 | 2 | **17 24 30 47 59** | **06** |
 | 3 | **21 39 43 46 66** | **13** |
-| 4 | **13 37 41 48 52** | **23** |
+| 4 | **13 41 48 52 62** | **23** |
 | 5 | **07 10 35 38 70** | **03** |
 
-Based on 2,557 draws since Fri May 17, 2002. Full report: [project-2-mega-millions/output/latest_picks.md](project-2-mega-millions/output/latest_picks.md)
+Based on 2,558 draws since Fri May 17, 2002. Full report: [project-2-mega-millions/output/latest_picks.md](project-2-mega-millions/output/latest_picks.md)
 
 ### Powerball: Wed Nov 18, 2026 at 10:59 PM ET
 
