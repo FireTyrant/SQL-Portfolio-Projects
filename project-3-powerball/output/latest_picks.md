@@ -1,6 +1,6 @@
 # Powerball picks for the next draw
 
-_Generated 2026-11-19 18:24 UTC from **3,883 draws** (1992-04-22 to 2026-11-18): 3,306 from powerball_com, 577 from archive_1992_1997._
+_Generated 2026-11-21 18:24 UTC from **3,883 draws** (1992-04-22 to 2026-11-18): 3,306 from powerball_com, 577 from archive_1992_1997._
 
 **Latest draw (2026-11-18):** 18 31 43 51 62  Powerball **12**
 
