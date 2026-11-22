@@ -1,21 +1,21 @@
 {
   "game": "Powerball",
   "ball_name": "Powerball",
-  "draws_used": 3882,
+  "draws_used": 3883,
   "first_draw": "1992-04-22",
   "latest_draw": {
-    "date": "2026-11-16",
+    "date": "2026-11-18",
     "white": [
-      17,
-      35,
-      48,
-      60,
-      69
+      18,
+      31,
+      43,
+      51,
+      62
     ],
-    "ball": 17
+    "ball": 12
   },
   "next_draw": {
-    "date": "2026-11-18",
+    "date": "2026-11-21",
     "time": "10:59 PM ET"
   },
   "tickets": [
@@ -33,21 +33,21 @@
     {
       "method": "Weighted",
       "white": [
-        4,
-        12,
-        21,
-        38,
-        58
+        15,
+        59,
+        60,
+        64,
+        67
       ],
-      "ball": 20
+      "ball": 26
     },
     {
       "method": "Weighted",
       "white": [
-        4,
-        24,
-        43,
-        59,
+        16,
+        21,
+        37,
+        40,
         64
       ],
       "ball": 21
@@ -55,38 +55,27 @@
     {
       "method": "Weighted",
       "white": [
-        24,
         36,
-        38,
-        40,
-        58
+        47,
+        52,
+        59,
+        64
       ],
-      "ball": 7
+      "ball": 8
     },
     {
       "method": "Weighted",
       "white": [
         4,
-        6,
+        14,
         27,
-        39,
+        36,
         65
       ],
-      "ball": 26
+      "ball": 3
     }
   ],
   "recent_draws": [
-    {
-      "date": "2026-10-03",
-      "white": [
-        4,
-        42,
-        44,
-        55,
-        59
-      ],
-      "ball": 14
-    },
     {
       "date": "2026-10-05",
       "white": [
@@ -295,6 +284,17 @@
         69
       ],
       "ball": 17
+    },
+    {
+      "date": "2026-11-18",
+      "white": [
+        18,
+        31,
+        43,
+        51,
+        62
+      ],
+      "ball": 12
     }
   ]
 }
