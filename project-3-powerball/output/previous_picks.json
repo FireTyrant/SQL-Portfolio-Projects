@@ -1,21 +1,21 @@
 {
   "game": "Powerball",
   "ball_name": "Powerball",
-  "draws_used": 3884,
+  "draws_used": 3885,
   "first_draw": "1992-04-22",
   "latest_draw": {
-    "date": "2026-11-21",
+    "date": "2026-11-23",
     "white": [
-      5,
-      29,
-      33,
-      36,
-      45
+      7,
+      9,
+      27,
+      40,
+      58
     ],
-    "ball": 22
+    "ball": 19
   },
   "next_draw": {
-    "date": "2026-11-23",
+    "date": "2026-11-25",
     "time": "10:59 PM ET"
   },
   "tickets": [
@@ -23,70 +23,59 @@
       "method": "Top scores",
       "white": [
         14,
+        16,
         30,
         59,
-        64,
+        64
+      ],
+      "ball": 3
+    },
+    {
+      "method": "Weighted",
+      "white": [
+        12,
+        13,
+        15,
+        16,
+        41
+      ],
+      "ball": 3
+    },
+    {
+      "method": "Weighted",
+      "white": [
+        9,
+        30,
+        39,
+        52,
         65
       ],
-      "ball": 3
+      "ball": 13
     },
     {
       "method": "Weighted",
       "white": [
-        16,
-        50,
-        61,
-        67,
-        69
-      ],
-      "ball": 3
-    },
-    {
-      "method": "Weighted",
-      "white": [
-        16,
+        3,
+        14,
         21,
-        44,
-        58,
-        61
+        24,
+        41
       ],
       "ball": 20
     },
     {
       "method": "Weighted",
       "white": [
-        3,
-        5,
-        12,
+        15,
+        26,
         27,
-        50
+        46,
+        59
       ],
-      "ball": 3
-    },
-    {
-      "method": "Weighted",
-      "white": [
-        8,
-        38,
-        51,
-        56,
-        67
-      ],
-      "ball": 10
+      "ball": 19
     }
   ],
   "recent_draws": [
-    {
-      "date": "2026-10-07",
-      "white": [
-        11,
-        13,
-        14,
-        21,
-        65
-      ],
-      "ball": 19
-    },
     {
       "date": "2026-10-10",
       "white": [
@@ -295,6 +284,17 @@
         45
       ],
       "ball": 22
+    },
+    {
+      "date": "2026-11-23",
+      "white": [
+        7,
+        9,
+        27,
+        40,
+        58
+      ],
+      "ball": 19
     }
   ]
 }
