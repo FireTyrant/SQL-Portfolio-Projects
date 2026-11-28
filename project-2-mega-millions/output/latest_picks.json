@@ -1,30 +1,30 @@
 {
   "game": "Mega Millions",
   "ball_name": "Mega Ball",
-  "draws_used": 2560,
+  "draws_used": 2561,
   "first_draw": "2002-05-17",
   "latest_draw": {
-    "date": "2026-11-24",
+    "date": "2026-11-27",
     "white": [
-      38,
-      42,
-      44,
-      45,
-      62
+      8,
+      16,
+      18,
+      33,
+      48
     ],
-    "ball": 16
+    "ball": 19
   },
   "next_draw": {
-    "date": "2026-11-27",
+    "date": "2026-12-01",
     "time": "11:00 PM ET"
   },
   "tickets": [
     {
       "method": "Top scores",
       "white": [
+        17,
         36,
         43,
-        50,
         51,
         59
       ],
@@ -33,60 +33,49 @@
     {
       "method": "Weighted",
       "white": [
-        21,
-        27,
-        37,
-        42,
+        20,
+        29,
+        36,
+        39,
+        49
+      ],
+      "ball": 6
+    },
+    {
+      "method": "Weighted",
+      "white": [
+        20,
+        30,
+        43,
+        54,
         59
       ],
-      "ball": 12
+      "ball": 8
     },
     {
       "method": "Weighted",
       "white": [
-        13,
-        16,
-        18,
-        20,
-        66
-      ],
-      "ball": 3
-    },
-    {
-      "method": "Weighted",
-      "white": [
-        11,
-        23,
+        8,
+        22,
         36,
-        57,
-        62
+        37,
+        47
       ],
-      "ball": 17
+      "ball": 21
     },
     {
       "method": "Weighted",
       "white": [
         1,
-        8,
-        30,
-        32,
-        59
+        7,
+        9,
+        29,
+        36
       ],
-      "ball": 11
+      "ball": 17
     }
   ],
   "recent_draws": [
-    {
-      "date": "2026-09-18",
-      "white": [
-        4,
-        9,
-        24,
-        56,
-        68
-      ],
-      "ball": 1
-    },
     {
       "date": "2026-09-22",
       "white": [
@@ -295,6 +284,17 @@
         62
       ],
       "ball": 16
+    },
+    {
+      "date": "2026-11-27",
+      "white": [
+        8,
+        16,
+        18,
+        33,
+        48
+      ],
+      "ball": 19
     }
   ]
 }
